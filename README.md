@@ -145,12 +145,13 @@ y_val_s   = {op: scalers_y[op].transform(y_val[get_indices(X_val,op)].reshape(-1
 ---
 
 ## 5. Espaço de Busca do Optuna  
-Para cada operação, testamos múltiplas combinações de:  
+Para cada uma das **4 operações** (adição, subtração, multiplicação e divisão), realizamos um estudo separado no Optuna. Em cada estudo, testamos múltiplas combinações de:
+
 - **Otimizadores**: `Adam`, `RMSprop`, `SGD`  
 - **Funções de ativação**: `ReLU`, `tanh`, `LeakyReLU`  
 - **Número de camadas**, **unidades**, **dropout**, **L2 regularization**, **learning rate**, **batch size**  
 
-Essa busca por combinação garante modelos especializados para cada operação.
+Isso gera **4 execuções independentes** do Optuna, uma para cada operação, garantindo hiperparâmetros especializados.
 
 ```python
 # === Célula 5: Criação de Modelos com Optuna ===
