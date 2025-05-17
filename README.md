@@ -1,36 +1,26 @@
 # Trabalho Redes Neurais 2 - Otimização de hiperparametros em operações matemáticas
 
+**Tecnologias e Ferramentas Utilizadas**  
+- **TensorFlow / Keras** (MLP, BatchNormalization, Dropout, LeakyReLU)  
+- **Optuna** (Otimização de hiperparâmetros, TPE Sampler, Median Pruner)  
+- **Scikit-Learn** (K-Fold Cross-Validation, StandardScaler, OneHotEncoder, shuffle, train_test_split)  
+- **Callbacks Avançados** (EarlyStopping, ModelCheckpoint, ReduceLROnPlateau, callback customizado)  
+- **Python** (NumPy, Matplotlib, JSON)  
+- **Jupyter Notebook** (estrutura em células e documentação inline)  
 
-Sistema de Previsão de Operações Matemáticas com Redes Neurais
-Este repositório contém um sistema de rede neural utilizando Keras, Optuna e técnicas avançadas de pré-processamento para prever operações matemáticas, como adição, subtração, multiplicação e divisão, com base em dois números fornecidos como entrada. O modelo usa otimização de hiperparâmetros com Optuna, validação cruzada, e callbacks avançados para monitoramento e melhoria do desempenho.
+Este repositório implementa um sistema de **rede neural** otimizado para prever operações matemáticas básicas (adição, subtração, multiplicação e divisão) a partir de dois números de entrada. O workflow completo inclui:
+
+- Geração de dados sintéticos ricos e balanceados  
+- Pré-processamento e engenharia de features  
+- Busca inteligente de hiperparâmetros com Optuna  
+- Validação cruzada robusta (K-Fold)  
+- Treino final com callbacks avançados  
+- Interface de testes em terminal  
+- Visualização de métricas e gráficos de treinamento  
 
 **Feito por:**
 - Thales Gabriel da Silva Fiscus - 2020100778
 - Mateus Lopes da Silva  - 2020100820
-
-Estrutura do Repositório
-O código está organizado em várias células (em formato Jupyter Notebook) e é composto pelos seguintes principais componentes:
-
-- Instalações e Imports
-
-- Métricas Customizadas e Callbacks
-
-- Geração e Divisão dos Dados
-
-- Pré-processamento de Dados
-
-- Criação do Modelo de Rede Neural
-
-- Otimização de Hiperparâmetros com Optuna
-
-- Treinamento e Validação
-
-- Exibição de MAES
-
-- Interface para Testes
-
-- Gráficos do treinamento
-
 
 ## 1. Instalações e Imports
 Na primeira célula, são feitas as instalações das bibliotecas necessárias e importados os pacotes utilizados ao longo do código. A seguir estão as bibliotecas essenciais importadas:
@@ -87,7 +77,7 @@ class TrainingMonitor(tf.keras.callbacks.Callback):
 - Para garantir que a rede neural tenha **ampla variedade de exemplos** e aprenda padrões robustos, optamos por uma base relativamente grande:  
 - Geramos **7.000 amostras** para cada operação, totalizando **28.000 exemplos**  
 - Cada amostra inclui dois números (`a`, `b`) e um código de operação (`0 = soma`, `1 = subtração`, `2 = multiplicação`, `3 = divisão`)  
-- Os valores de `a` e `b` são contínuos no intervalo **[1, 100]**  
+- Os valores de `a` e `b` são contínuos no intervalo **[1, 20]**  
 - Em seguida, **embaralhamos** todas as amostras com `shuffle(random_state=42)` e dividimos em:  
   - **60%** para **treino**  
   - **20%** para **validação**  
@@ -99,7 +89,7 @@ def gerar_dados(n_por_op=7000, seed=42):
     np.random.seed(seed)
     X, y = [], []
     for _ in range(n_por_op):
-        a, b = np.random.uniform(1, 100), np.random.uniform(1, 100)
+        a, b = np.random.uniform(1, 20), np.random.uniform(1, 20)
         ops = [a + b, a - b, a * b, a / b]
         for i, val in enumerate(ops):
             X.append([a, b, i])
@@ -416,10 +406,10 @@ Durante o treinamento e validação do modelo MLP com Keras e Optuna, foram apli
 
 | Operação    | MAE Final (Teste) |
 |-------------|-------------------|
-| Adição (0)  | 0.5085            |
-| Subtração (1) | 0.6454          |
-| Multiplicação (2) | 174.8193    |
-| Divisão (3) | 0.1975            |
+| Adição (0)  | 0.1068            |
+| Subtração (1) | 0.1186          |
+| Multiplicação (2) | 3.9654      |
+| Divisão (3) | 0.0436            |
 
 Observação: para a operação de multiplicação, foi aplicado log-transform no valor da saída para facilitar o aprendizado, devido à alta variância nos valores.
 
@@ -558,6 +548,59 @@ for op in range(4):
     plt.show()
 
 ```
+---
+
+## 🎯 Exemplos de Testes Reais
+
+Abaixo estão alguns exemplos de testes manuais realizados após o treinamento final com hiperparâmetros otimizados. Esses casos demonstram a precisão da rede neural nas quatro operações:
+
+```text
+Primeiro número:  5
+Segundo número:  10
+Operação: Adição
+Previsão: 14.9647 | Correto: 15.0000 | Erro: 0.0353 | ✅ Excelente!
+
+Primeiro número: 16
+Segundo número:  8
+Operação: Adição
+Previsão: 23.9806 | Correto: 24.0000 | Erro: 0.0194 | ✅ Excelente!
+
+Primeiro número: 15
+Segundo número:  9
+Operação: Subtração
+Previsão: 6.0945 | Correto: 6.0000 | Erro: 0.0945 | ✅ Excelente!
+
+Primeiro número:  4
+Segundo número:  2
+Operação: Subtração
+Previsão: 1.9830 | Correto: 2.0000 | Erro: 0.0170 | ✅ Excelente!
+
+Primeiro número:  3
+Segundo número:  2
+Operação: Multiplicação
+Previsão: 6.0804 | Correto: 6.0000 | Erro: 0.0804 | ✅ Excelente!
+
+Primeiro número: 15
+Segundo número: 10
+Operação: Multiplicação
+Previsão: 147.6170 | Correto: 150.0000 | Erro: 2.3830 | ⚠️ Ops!
+
+Primeiro número:  3
+Segundo número:  3
+Operação: Divisão
+Previsão: 1.0740 | Correto: 1.0000 | Erro: 0.0740 | ✅ Excelente!
+
+Primeiro número: 20
+Segundo número: 10
+Operação: Divisão
+Previsão: 2.0243 | Correto: 2.0000 | Erro: 0.0243 | ✅ Excelente!
+```
+
+- A **maioria das previsões** tem erros abaixo de **0.1**, o que é excelente para aplicações de apoio ao ensino.
+
+- A **multiplicação com valores mais altos** (como `15 × 10`) ainda pode apresentar variações um pouco maiores, o que é esperado dada a sensibilidade dessa operação à escala dos operandos.
+
+- O modelo consegue **generalizar bem mesmo em pontos não vistos**, o que evidencia a eficácia do **pré-processamento inteligente** e da **otimização individual por operação com Optuna + validação cruzada K-Fold**.
 
 ---
 
