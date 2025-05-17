@@ -84,6 +84,7 @@ class TrainingMonitor(tf.keras.callbacks.Callback):
 ---
 
 ## 3. Geração de Dados Sintéticos  
+- Para garantir que a rede neural tenha **ampla variedade de exemplos** e aprenda padrões robustos, optamos por uma base relativamente grande:  
 - Geramos **7.000 amostras** para cada operação, totalizando **28.000 exemplos**  
 - Cada amostra inclui dois números (`a`, `b`) e um código de operação (`0 = soma`, `1 = subtração`, `2 = multiplicação`, `3 = divisão`)  
 - Os valores de `a` e `b` são contínuos no intervalo **[1, 100]**  
@@ -114,9 +115,12 @@ X_train, X_val, y_train, y_val = train_test_split(X_tmp, y_tmp, test_size=0.25, 
 ---
 
 ## 4. Pré-processamento  
-- Aplicamos **StandardScaler** aos operandos (`a`, `b`) para centralizar média em 0 e variância em 1.  
-- Usamos **OneHotEncoder** para transformar o código da operação em vetor one-hot.  
-- Geramos cinco atributos extras (`a*b`, `a/(b+ε)`, etc.) para enriquecer as entradas.
+- **StandardScaler** nos operandos (`a`, `b`): média = 0, variância = 1, acelera convergência do treinamento.  
+- **OneHotEncoder** no código da operação: redes neutras não precisam aprender a distinguir operações básicas por si — a codificação one-hot destaca “qual” operação realizar.  
+- **Features derivadas** para dar à rede “atalhos” nos cálculos:
+  - `a * b` — fornece diretamente o termo multiplicativo.  
+  - `a / (b + ε)` e `b / (a + ε)` — evitam divisão por zero e realçam razões.  
+  - `a**2` e `b**2` — capturam componentes quadráticos, úteis em operações não-lineares.  
 
 ```python
 # === Célula 4: Pré‑processamento ===
