@@ -1,5 +1,7 @@
 # Trabalho Redes Neurais 2 - Otimização de hiperparametros em operações matemáticas
 
+Criação de uma rede neural com objetivo de aprender a realizar operações matemáticas básicas (adição, subtração, multiplicação e divisão), utilizando geração de dados sintéticos, normalização, otimização de hiperparâmetros com ferramentas como Keras Tuner ou Optuna, validação cruzada, uso de callbacks e análise de desempenho.
+
 **Tecnologias e Ferramentas Utilizadas**  
 - **TensorFlow / Keras** (MLP, BatchNormalization, Dropout, LeakyReLU)  
 - **Optuna** (Otimização de hiperparâmetros, TPE Sampler, Median Pruner)  
